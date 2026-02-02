@@ -19,13 +19,13 @@ All large datasets, generated segments, and model artifacts are intentionally ex
 
 **Data Cleaning and Standardization**
 
-The script Cleaning_Two_Datasets.py performs preprocessing of raw PTB-XL ECG recordings.
+The script Cleaning_Dataset.py performs preprocessing of raw PTB-XL ECG recordings.
 
 Signals are filtered using standard signal-processing techniques to remove baseline wander and high-frequency noise, resampled to a fixed temporal resolution, and standardized to a consistent 12-lead format. Each cleaned record is saved as a NumPy array, accompanied by a JSON file containing patient identifiers and diagnostic metadata.
 
 Cleaned outputs are stored under:
 
-    Cleaned_Datasets/ptbxl_clean/
+    Cleaned_Dataset/ptbxl_clean/
 
 **Sliding-Window Segmentation**
 
@@ -71,7 +71,7 @@ This design prevents information leakage and ensures reliable evaluation.
 
 **Lead Reconstruction Models**
 
-The script Final_Model_Folds_Simple.py trains and evaluates the final ECG lead reconstruction models.
+The script Final_Model.py trains and evaluates the final ECG lead reconstruction models.
 
 Multiple input sources, including raw clean signals and contrastive representations, are projected into a shared latent space and fused. A lightweight convolutional decoder is trained separately for each target lead to reconstruct missing ECG leads.
 
