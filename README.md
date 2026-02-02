@@ -1,23 +1,23 @@
-ECG_Leads_Reconstruction
+**ECG_Leads_Reconstruction**
 
 This repository contains a complete pipeline for ECG lead reconstruction using contrastive representation learning and lightweight decoding models.
 The workflow is designed around the PTB-XL dataset and enforces strict patient-wise separation across all stages.
 
-Overview
+**Overview**
 
 The pipeline consists of four main stages:
 
-ECG signal cleaning and standardization
+    1- ECG signal cleaning and standardization
 
-Sliding-window segmentation with quality control
+    2- Sliding-window segmentation with quality control
 
-Contrastive representation learning and extraction
+    3- Contrastive representation learning and extraction
 
-Patient-wise training and evaluation of lead reconstruction models
+    4- Patient-wise training and evaluation of lead reconstruction models
 
 All large datasets, generated segments, and model artifacts are intentionally excluded from this repository.
 
-Data Cleaning and Standardization
+**Data Cleaning and Standardization**
 
 The script Cleaning_Two_Datasets.py performs preprocessing of raw PTB-XL ECG recordings.
 
@@ -25,31 +25,31 @@ Signals are filtered using standard signal-processing techniques to remove basel
 
 Cleaned outputs are stored under:
 
-Cleaned_Datasets/ptbxl_clean/
+    Cleaned_Datasets/ptbxl_clean/
 
-Sliding-Window Segmentation
+**Sliding-Window Segmentation**
 
 The script Segmentation.py segments cleaned ECG recordings into fixed-length overlapping windows suitable for learning-based models.
 
 A two-pass strategy is used:
 
-In the first pass, per-lead amplitude and RMS statistics are estimated from sampled segments.
-
-In the second pass, sliding-window segments are extracted and filtered using percentile-based quality-control thresholds.
+    In the first pass, per-lead amplitude and RMS statistics are estimated from sampled segments.
+    
+    In the second pass, sliding-window segments are extracted and filtered using percentile-based quality-control thresholds.
 
 Accepted segments are written in sharded NumPy files with aligned metadata, along with summary statistics and quality-control reports.
 
 Outputs are stored under:
 
-Segments/ptbxl/
+    Segments/ptbxl/
 
-Contrastive Representation Learning
+**Contrastive Representation Learning**
 
 The script contrastive_morphology.py trains a 1D convolutional encoder using supervised contrastive learning on segmented ECG data.
 
 Segments are sampled in class-balanced batches, and positive pairs are formed based on shared diagnostic labels. The encoder operates on a subset of ECG leads and learns normalized latent embeddings that capture morphological structure relevant for reconstruction.
 
-Representation Extraction
+**Representation Extraction**
 
 The script extract_contrastive_reps.py applies the trained contrastive encoder to segmented ECG data and extracts latent representations.
 
@@ -57,9 +57,9 @@ For each segment, a fixed-dimensional latent vector is produced. These represent
 
 Extracted representations are stored under:
 
-reps/
+    reps/
 
-Patient-wise Data Organization
+**Patient-wise Data Organization**
 
 Two scripts are used to enforce patient-level separation:
 
@@ -69,7 +69,7 @@ reorder_shards_by_patient.py reorganizes segmented data into patient-consistent 
 
 This design prevents information leakage and ensures reliable evaluation.
 
-Lead Reconstruction Models
+**Lead Reconstruction Models**
 
 The script Final_Model_Folds_Simple.py trains and evaluates the final ECG lead reconstruction models.
 
@@ -79,7 +79,7 @@ Training is performed using fixed patient-wise folds. Model selection relies on 
 
 Outputs, including predictions, trained models, and evaluation summaries, are saved under:
 
-StackedRecons_ptbxl_Contr/
+    StackedRecons_ptbxl_Contr/
 
 Notes
 
