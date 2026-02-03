@@ -320,7 +320,7 @@ class StackedLatentDecoder(nn.Module):
         out = out.squeeze(1)
         return out
 
-def safe_pearson_mean(y_true, y_pred):
+def pearson_mean(y_true, y_pred):
     vals = []
     for i in range(y_true.shape[0]):
         if np.std(y_true[i]) > 0:
@@ -338,7 +338,7 @@ def compute_metrics(y_true, y_pred):
         r2 = r2_score(y_true.flatten(), y_pred.flatten())
     except Exception:
         r2 = float("nan")
-    pear = safe_pearson_mean(y_true, y_pred)
+    pear = pearson_mean(y_true, y_pred)
     return {"rmse": rmse, "r2": r2, "pearson": pear}
 
 def train_model(model, train_loader, val_loader, epochs, lr, device, model_tag, report_fh):
