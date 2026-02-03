@@ -14,7 +14,7 @@ try:
     import wfdb
 except Exception:
     wfdb = None
-from scipy.signal import butter, filtfilt, medfilt, decimate, resample_poly, iirnotch
+from scipy.signal import butter, filtfilt, medfilt, iirnotch
 
 TARGET_LENGTH = 1000
 OUT_ROOT = Path("./Cleaned_Datasets").resolve()
@@ -101,33 +101,6 @@ def pad_or_trim(ecg: np.ndarray, targ_len: int = TARGET_LENGTH) -> np.ndarray:
         pad = np.zeros((targ_len - t, c), dtype=ecg.dtype)
         return np.concatenate([ecg, pad], axis=0)
     return ecg
-
-
-# resample
-def downsample_to(arr: np.ndarray, orig_fs: float, new_fs: float) -> np.ndarray:
-    if new_fs <= 0 or orig_fs <= 0:
-        raise ValueError("Sampling rates must be positive")
-    if abs(new_fs - orig_fs) < 1e-6:
-        return arr
-    factor = orig_fs / new_fs
-    if abs(round(factor) - factor) < 1e-6 and round(factor) >= 1:
-        q = int(round(factor))
-        out_list = []
-        for ch in range(arr.shape[1]):
-            try:
-                out_ch = decimate(arr[:, ch], q, ftype="fir", zero_phase=True)
-            except TypeError:
-                out_ch = decimate(arr[:, ch], q, ftype="fir")
-            out_list.append(out_ch)
-        out = np.vstack([o for o in out_list]).T
-        return out
-    else:
-        from fractions import Fraction
-        frac = Fraction(new_fs / orig_fs).limit_denominator(1000)
-        up, down = frac.numerator, frac.denominator
-        out = resample_poly(arr, up, down, axis=0)
-        return out
-
 
 # io
 def safe_json_dump(obj, path: Path):
